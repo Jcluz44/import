@@ -42,25 +42,29 @@ def lire_fichiers_et_verifier(fichiers):
     erreur_detectee = False
 
     for fichier in fichiers:
-        # Lire le contenu du fichier
-        contenu = fichier.read().decode("utf-8")  # Utiliser read() ici
+        try:
+            # Lire le contenu du fichier en utilisant un encodage spécifique (latin-1 dans cet exemple)
+            contenu = fichier.read().decode("latin-1")
 
-        if "erreur" in contenu.lower():  # Adaptez le critère d'erreur selon vos besoins
-            st.error(f"Erreur détectée dans le fichier {fichier.name}. Arrêt de l'import.")
-            erreur_detectee = True
-            break
+            if "erreur" in contenu.lower():  # Adaptez le critère d'erreur selon vos besoins
+                st.error(f"Erreur détectée dans le fichier {fichier.name}. Arrêt de l'import.")
+                erreur_detectee = True
+                break
 
-        date = extraire_date(contenu)
-        info_specifique = extraire_info_specifique(contenu)
+            date = extraire_date(contenu)
+            info_specifique = extraire_info_specifique(contenu)
 
-        if date and info_specifique:
-            if info_specifique_precedent and info_specifique != info_specifique_precedent:
-                nouveau_nic = st.text_input(f"Le NIC a changé dans le fichier {fichier.name}. Veuillez entrer le nouveau NIC pour continuer.", key=fichier.name)
-                if not nouveau_nic:
-                    st.warning("Import en attente de la mise à jour du NIC.")
-                    break
-            donnees_clients.append({'nom_fichier': fichier.name, 'date': date, 'info': info_specifique})
-            info_specifique_precedent = info_specifique
+            if date and info_specifique:
+                if info_specifique_precedent and info_specifique != info_specifique_precedent:
+                    nouveau_nic = st.text_input(f"Le NIC a changé dans le fichier {fichier.name}. Veuillez entrer le nouveau NIC pour continuer.", key=fichier.name)
+                    if not nouveau_nic:
+                        st.warning("Import en attente de la mise à jour du NIC.")
+                        break
+                donnees_clients.append({'nom_fichier': fichier.name, 'date': date, 'info': info_specifique})
+                info_specifique_precedent = info_specifique
+
+        except UnicodeDecodeError:
+            st.warning(f"Impossible de décoder le fichier {fichier.name}. Il sera ignoré.")
 
     return donnees_clients, erreur_detectee
 
