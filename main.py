@@ -2,11 +2,16 @@ import streamlit as st
 import requests
 
 def get_auth_token(email, password, base_url):
-    url_auth = f"{base_url}/api/login'"  # Assurez-vous que le chemin d'accès à l'API est correct
-    data_auth = {'email': email, 'password': password}
-    response = requests.post(url_auth, data=data_auth)
+    url_auth = f"{base_url}/api/login"
+    headers = {'Content-Type': 'application/json'}
+    data_auth = {
+        'email': email,
+        'password': password
+    }
+
+    response = requests.post(url_auth, json=data_auth, headers=headers)
     if response.status_code == 200:
-        return response.json().get("token")
+        return response.json().get("token")  # Assurez-vous que c'est le bon chemin dans la réponse JSON pour le token
     else:
         return None
 
