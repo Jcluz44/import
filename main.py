@@ -42,7 +42,8 @@ def lire_fichiers_et_verifier(fichiers):
     erreur_detectee = False
 
     for fichier in fichiers:
-        contenu = fichier.getvalue().decode("utf-8")
+        # Lire le contenu du fichier
+        contenu = fichier.read().decode("utf-8")  # Utiliser read() ici
 
         if "erreur" in contenu.lower():  # Adaptez le critère d'erreur selon vos besoins
             st.error(f"Erreur détectée dans le fichier {fichier.name}. Arrêt de l'import.")
