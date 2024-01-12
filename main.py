@@ -67,7 +67,30 @@ def trier_par_date(donnees_clients):
     return sorted(donnees_clients, key=lambda x: datetime.strptime(x['date'], '%m%Y'))
 
 # Page d'authentification
-v
+# Page d'authentification
+def page_authentification():
+    st.title('Authentification')
+
+    base_urls = {
+        "prod": "https://app.listo.pro",
+        "preprod": "https://preprod.listo.pro",
+        "staging": "https://staging.listo.pro"
+    }
+
+    environment = st.sidebar.selectbox("Choisir l'environnement", list(base_urls.keys()))
+    base_url = base_urls[environment]
+
+    email = st.sidebar.text_input("Email")
+    password = st.sidebar.text_input("Mot de Passe", type="password")
+
+    if st.sidebar.button('Se connecter'):
+        token = get_auth_token(email, password, base_url)
+        if token:
+            st.success('Connecté avec succès!')
+            st.session_state['token'] = token
+            st.session_state['environment'] = environment  # Stocker le nom de l'environnement
+        else:
+            st.error("Échec de l'authentification")
 
 # Page d'import de fichiers
 def page_import_fichiers():
